@@ -2,7 +2,7 @@
 
 <br/>
 
-[Android app](https://github.com/NileshSP/FlutterBatteryNotifyer/tree/v0.0.1, "Android app")
+[Android app](https://github.com/NileshSP/FlutterBatteryNotifyer/releases/download/v0.0.1/app.apk)
 
 <br/>
 
