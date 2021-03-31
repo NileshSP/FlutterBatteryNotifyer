@@ -2,7 +2,7 @@
 
 <br/>
 
-Install & try out latest [release](https://github.com/NileshSP/FlutterBatteryNotifyer/releases/tag/release_2021-03-31_22-03-28)
+Install & try out latest [release](https://github.com/NileshSP/FlutterBatteryNotifyer/releases/latest)
 
 <br/>
 
