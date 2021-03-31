@@ -22,28 +22,28 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
+  cupertino_icons: ^1.0.2
 
   # adding battery package  
-  battery: ^1.0.1
+  battery: ^2.0.1
 
   # adding date format package
-  intl: ^0.16.1
+  intl: ^0.17.0
 
   # platform notifications
-  flutter_local_notifications: ^1.4.3
+  flutter_local_notifications: ^5.0.0
 
   # number picker
-  numberpicker: ^1.2.0
+  numberpicker: ^2.0.1
 
   #shared_preferences for maintaining data on disk
-  shared_preferences: ^0.5.7+2
+  shared_preferences: ^2.0.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_launcher_icons: "^0.7.5"
+  flutter_launcher_icons: ^0.9.0
 
 
 flutter_icons:
