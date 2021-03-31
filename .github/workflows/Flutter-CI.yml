@@ -15,6 +15,8 @@ jobs:
   build:
     name: Build Apps
     runs-on: macos-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Export Release Timestamp
         run: echo "APP_VERSION=release_$(date +'%Y-%m-%d_%H-%m-%S')" >> $GITHUB_ENV
@@ -49,10 +51,14 @@ jobs:
           flutter build web
           cd build/web
           zip -r web-app.zip .
+      - id: release
+        uses: rymndhng/release-on-push-action@master
+        with:
+          bump_version_scheme: minor
       - name: Release Apps
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ env.APP_VERSION }}
+          tag: ${{ steps.release.outputs.tag_name }}
           name: ${{ env.APP_VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: "build/app/outputs/apk/release/*.apk,build/ios/iphoneos/app.ipa,build/web/web-app.zip"    
