@@ -2,7 +2,7 @@
 
 <br/>
 
-[Android app](https://github.com/NileshSP/FlutterBatteryNotifyer/releases/download/v0.0.1/app.apk)
+Install & try out latest [release](https://github.com/NileshSP/FlutterBatteryNotifyer/releases/tag/release_2021-03-31_22-03-28)
 
 <br/>
 
