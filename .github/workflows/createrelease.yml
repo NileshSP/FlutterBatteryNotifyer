@@ -18,7 +18,6 @@ on:
 jobs:
   build:
     name: Build Apps
-    needs: release-on-push
     runs-on: macos-latest
     steps:
       - name: Export Release Timestamp
