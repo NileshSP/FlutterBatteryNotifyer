@@ -76,6 +76,6 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: ${{ needs.release-on-push.outputs.TAG_NAME }}
-          name: ${{ needs.release-on-push.outputs.NEW_VERSION }}
+          name: ${{ needs.release-on-push.outputs.TAG_NAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: "build/app/outputs/apk/release/*.apk,build/ios/iphoneos/app.ipa,build/web/web-app.zip"    
