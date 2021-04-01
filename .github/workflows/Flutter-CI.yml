@@ -23,7 +23,7 @@ jobs:
       TAG_NAME: ${{ steps.release.outputs.tag_name }}
     steps:
       - id: release
-        if:  ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }} 
+        if:  ${{ env.PUSH_PACKAGES }} 
         uses: rymndhng/release-on-push-action@master
         with:
           bump_version_scheme: minor
