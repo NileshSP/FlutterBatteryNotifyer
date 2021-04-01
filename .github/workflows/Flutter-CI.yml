@@ -8,15 +8,28 @@ name: FlutterBatteryNotyfier-CI
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
 jobs:
-  build:
-    name: Build Apps
-    runs-on: macos-latest
+  release-on-push:
+    runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PUSH_PACKAGES: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }} # create release only if push to master
+    outputs:
+      PUSH_PACKAGES: ${{ env.PUSH_PACKAGES }}
+      NEW_VERSION: ${{ steps.step-release.outputs.version }}
+    steps:
+      - name: create release details
+        id: step-release
+        if: ${{ env.PUSH_PACKAGES }}
+        uses: rymndhng/release-on-push-action@master
+        with:
+          bump_version_scheme: minor
+
+  build:
+    name: Build Apps
+    needs: release-on-push
+    runs-on: macos-latest
     steps:
       - name: Export Release Timestamp
         run: echo "APP_VERSION=release_$(date +'%Y-%m-%d_%H-%m-%S')" >> $GITHUB_ENV
@@ -51,14 +64,11 @@ jobs:
           flutter build web
           cd build/web
           zip -r web-app.zip .
-      - id: release
-        uses: rymndhng/release-on-push-action@master
-        with:
-          bump_version_scheme: minor
       - name: Release Apps
+        if: ${{ needs.release-on-push.outputs.PUSH_PACKAGES }}      
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ steps.release.outputs.tag_name }}
+          tag: ${{ needs.release-on-push.outputs.NEW_VERSION }}
           name: ${{ env.APP_VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: "build/app/outputs/apk/release/*.apk,build/ios/iphoneos/app.ipa,build/web/web-app.zip"    
