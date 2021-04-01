@@ -19,18 +19,17 @@ jobs:
       PUSH_PACKAGES: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }} # create release only if push to master
     outputs:
       PUSH_PACKAGES: ${{ env.PUSH_PACKAGES }}
-      NEW_VERSION: ${{ steps.step-release.outputs.version }}
+      NEW_VERSION: ${{ steps.release.outputs.version }}
     steps:
-      - name: create release details
-        id: step-release
-        #if: ${{ env.PUSH_PACKAGES }}
+      - id: release
         uses: rymndhng/release-on-push-action@master
         with:
           bump_version_scheme: minor
+          
       - name: Check Output Parameters
         run: |
-          echo "Got tag name ${{ steps.step-release.outputs.tag_name }}"
-          echo "Got release version ${{ steps.step-release.outputs.version }}"
+          echo "Got tag name ${{ steps.release.outputs.tag_name }}"
+          echo "Got release version ${{ steps.release.outputs.version }}"  release-on-push:
 
   build:
     name: Build Apps
