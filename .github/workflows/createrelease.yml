@@ -23,7 +23,9 @@ jobs:
       - name: Export Release Timestamp
         run: echo "APP_VERSION=release_$(date +'%Y-%m-%d_%H-%m-%S')" >> $GITHUB_ENV
       - name: Checkout repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.branch }}
       - name: Set up Java
         uses: actions/setup-java@v1
         with:
