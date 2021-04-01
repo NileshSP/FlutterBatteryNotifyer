@@ -20,8 +20,10 @@ jobs:
     outputs:
       PUSH_PACKAGES: ${{ env.PUSH_PACKAGES }}
       NEW_VERSION: ${{ steps.release.outputs.version }}
+      TAG_NAME: ${{ steps.release.outputs.tag_name }}
     steps:
       - id: release
+        if:  ${{ env.PUSH_PACKAGES }} 
         uses: rymndhng/release-on-push-action@master
         with:
           bump_version_scheme: minor
@@ -73,7 +75,7 @@ jobs:
         if: ${{ needs.release-on-push.outputs.PUSH_PACKAGES }}      
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ needs.release-on-push.outputs.NEW_VERSION }}
-          name: ${{ env.APP_VERSION }}
+          tag: ${{ needs.release-on-push.outputs.TAG_NAME }}
+          name: ${{ needs.release-on-push.outputs.NEW_VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: "build/app/outputs/apk/release/*.apk,build/ios/iphoneos/app.ipa,build/web/web-app.zip"    
