@@ -10,7 +10,7 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-    
+
 jobs:
   release-on-push:
     runs-on: ubuntu-latest
@@ -23,10 +23,14 @@ jobs:
     steps:
       - name: create release details
         id: step-release
-        if: ${{ env.PUSH_PACKAGES }}
+        #if: ${{ env.PUSH_PACKAGES }}
         uses: rymndhng/release-on-push-action@master
         with:
           bump_version_scheme: minor
+      - name: Check Output Parameters
+        run: |
+          echo "Got tag name ${{ steps.step-release.outputs.tag_name }}"
+          echo "Got release version ${{ steps.step-release.outputs.version }}"
 
   build:
     name: Build Apps
