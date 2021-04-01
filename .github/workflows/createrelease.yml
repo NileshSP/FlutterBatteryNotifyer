@@ -17,7 +17,7 @@ on:
 
 jobs:
   build:
-    name: Build Apps
+    name: Build & release apps
     runs-on: macos-latest
     steps:
       - name: Export Release Timestamp
