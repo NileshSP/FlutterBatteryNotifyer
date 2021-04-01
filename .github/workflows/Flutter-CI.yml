@@ -49,18 +49,3 @@ jobs:
           flutter build web
           cd build/web
           zip -r web-app.zip .
-      - id: create-release
-        uses: rymndhng/release-on-push-action@master
-        with:
-          bump_version_scheme: minor         
-      - name: Check Output Parameters
-        run: |
-          echo "Got tag name ${{ steps.create-release.outputs.tag_name }}"
-          echo "Got release version ${{ steps.create-release.outputs.version }}"  release-on-push:
-      - name: Release Apps
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.create-release.outputs.tag_name }}
-          name: ${{ steps.create-release.outputs.tag_name }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: "build/app/outputs/apk/release/*.apk,build/ios/iphoneos/app.ipa,build/web/web-app.zip"    
