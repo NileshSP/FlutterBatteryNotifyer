@@ -105,14 +105,16 @@ class BatteryDetailsState extends State<BatteryDetails>
 
     batteryStateSubscription =
         battery.onBatteryStateChanged.listen((BatteryState state) async {
-      batteryMod.currBatteryState = state;
-      batteryMod.currBatteryLevel = await battery.batteryLevel;
-      batteryMod.currBatteryDateTime = DateTime.now();
-      batteryStreamController.add(batteryMod);
+      battery.batteryLevel.then((level) {
+        batteryMod.currBatteryState = state;
+        batteryMod.currBatteryLevel = level; //await battery.batteryLevel;
+        batteryMod.currBatteryDateTime = DateTime.now();
+        batteryStreamController.add(batteryMod);
+      });
     });
     dateTimeSubscription =
         Stream.periodic(Duration(seconds: 1)).listen((_) async {
-      batteryMod.currBatteryLevel = await battery.batteryLevel;
+      //batteryMod.currBatteryLevel = await battery.batteryLevel;
       batteryMod.currBatteryDateTime = DateTime.now();
       batteryStreamController.add(batteryMod);
     });
