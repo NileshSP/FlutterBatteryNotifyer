@@ -39,6 +39,15 @@ dependencies:
   #shared_preferences for maintaining data on disk
   shared_preferences: ^2.0.5
 
+  audio_service:  ^0.17.0
+
+  path_provider: ^2.0.1
+  audio_session: ^0.1.0
+  just_audio: ^0.7.0
+  flutter_tts: ^3.0.0
+  rxdart: ^0.26.0
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
