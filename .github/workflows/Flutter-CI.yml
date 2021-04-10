@@ -37,12 +37,13 @@ jobs:
         run: flutter build apk --split-per-abi
       - name: Build iOS App
         run: |
-          rm ios/Podfile
-          rm -Rf ios/Pods
-          rm -Rf ios/.symlinks
-          rm -Rf ios/Flutter/Flutter.framework
-          rm -Rf ios/Flutter/Flutter.podspec
           cd ios
+          ls
+          rm -Rf Podfile
+          rm -Rf Pods
+          rm -Rf .symlinks
+          rm -Rf Flutter/Flutter.framework
+          rm -Rf Flutter/Flutter.podspec
           pod cache clean --all
           pod deintegrate
           pod setup
