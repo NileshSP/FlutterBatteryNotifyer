@@ -42,7 +42,7 @@ jobs:
           rm -Rf ios/Flutter/Flutter.framework
           rm -Rf ios/Flutter/Flutter.podspec
           cd ios
-          pod install
+          pod install --repo-update 
           cd ..
           flutter build ios --no-codesign
           cd build/ios/iphoneos
