@@ -37,18 +37,6 @@ jobs:
         run: flutter build apk --split-per-abi
       - name: Build iOS App
         run: |
-          cd ios
-          ls
-          rm -Rf Podfile
-          rm -Rf Pods
-          rm -Rf .symlinks
-          rm -Rf Flutter/Flutter.framework
-          rm -Rf Flutter/Flutter.podspec
-          pod cache clean --all
-          pod deintegrate
-          pod setup
-          pod install --repo-update 
-          cd ..
           flutter build ios --no-codesign
           cd build/ios/iphoneos
           mkdir Payload
