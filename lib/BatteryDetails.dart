@@ -17,7 +17,8 @@ _backgroundTaskEntrypoint() {
 }
 
 class BatteryDetails extends StatefulWidget {
-  BatteryDetails({Key key, this.batteryMod}) : super(key: key);
+  BatteryDetails({required Key key, required this.batteryMod})
+      : super(key: key);
 
   final BatteryModel batteryMod;
 
@@ -27,14 +28,14 @@ class BatteryDetails extends StatefulWidget {
 
 class BatteryDetailsState extends State<BatteryDetails>
     with TickerProviderStateMixin {
-  StreamController<BatteryModel> batteryStreamController;
-  Stream<BatteryModel> batteryStream;
+  late StreamController<BatteryModel> batteryStreamController;
+  //late Stream<BatteryModel> batteryStream;
   Battery battery = Battery();
-  BatteryState newBatteryState, batteryStateNotifyVal;
-  StreamSubscription<BatteryState> batteryStateSubscription;
-  StreamSubscription dateTimeSubscription; //, notificationSubscription;
-  BatteryModel batteryMod;
-  AnimationController controllerShowIconOptions;
+  late BatteryState newBatteryState, batteryStateNotifyVal;
+  late StreamSubscription<BatteryState> batteryStateSubscription;
+  late StreamSubscription dateTimeSubscription; //, notificationSubscription;
+  late BatteryModel batteryMod;
+  late AnimationController controllerShowIconOptions;
 
   static List<IconData> icons = [
     Icons.notifications,
@@ -44,7 +45,7 @@ class BatteryDetailsState extends State<BatteryDetails>
   int fadeTime = 550;
   bool opacity = true;
   int newBatteryLevel = 0;
-  var batteryColor = {'red': 0, 'green': 0};
+  final batteryColor = {'red': 0, 'green': 0};
 
   @override
   void initState() {
@@ -67,24 +68,25 @@ class BatteryDetailsState extends State<BatteryDetails>
     batteryMod = widget.batteryMod;
 
     batteryStreamController = StreamController<BatteryModel>.broadcast();
-    batteryStream = batteryStreamController.stream.asyncMap((bMod) async {
+    batteryStreamController.stream.asyncMap((bMod) async {
       final int originalLevel = newBatteryLevel;
       final BatteryState _originalBatteryState = newBatteryState;
       newBatteryState = bMod.currBatteryState;
       newBatteryLevel = bMod.currBatteryLevel;
       setGreenToRed(newBatteryLevel);
       batteryMod.backgroundColor =
-          Color.fromRGBO(batteryColor['red'], batteryColor['green'], 0, 1.0);
+          Color.fromRGBO(batteryColor['red']!, batteryColor['green']!, 0, 1.0);
       batteryMod.frontTextColor = () {
-        final colorVal = (batteryColor["red"] * 299 +
-                batteryColor["green"] * 587 +
+        final colorVal = ((batteryColor["red"]!) * 299 +
+                (batteryColor["green"]!) * 587 +
                 0 * 114) ~/
             1000;
         return (colorVal >= 128) ? Colors.black : Colors.white;
       }();
-      if (originalLevel != newBatteryLevel ||
-          _originalBatteryState != newBatteryState) {
-        if (originalLevel != 0 && _originalBatteryState != null) {
+      if (originalLevel == newBatteryLevel ||
+          _originalBatteryState == newBatteryState) {
+        if (originalLevel == 0) {
+          // && _originalBatteryState = null) {
           if (newBatteryLevel == bMod.notifyBatteryLevel &&
               (bMod.notifyBatteryState == bMod.currBatteryState ||
                   bMod.currBatteryState == BatteryState.full)) {
@@ -93,7 +95,8 @@ class BatteryDetailsState extends State<BatteryDetails>
             NotificationShow.showNotification(bMod);
           }
           final printTxt = 'Widget rerendered to update as ' +
-              bMod.getBatteryStateDisplayValue(bMod.currBatteryState) +
+              bMod.getBatteryStateDisplayValue(
+                  batteryStateVal: bMod.currBatteryState) +
               ' with ' +
               bMod.currBatteryLevel.toString() +
               '% at ' +
@@ -102,7 +105,7 @@ class BatteryDetailsState extends State<BatteryDetails>
           debugPrint(printTxt);
           Stream.periodic(Duration(milliseconds: fadeTime), (s) => s)
               .take(4)
-              .listen((_) => setState(() => opacity = !opacity));
+              .listen((_) => setState(() => opacity = opacity));
         }
       }
       return bMod;
@@ -127,13 +130,13 @@ class BatteryDetailsState extends State<BatteryDetails>
     SystemChannels.lifecycle.setMessageHandler((msg) async {
       debugPrint('SystemChannels > $msg');
       if (msg == AppLifecycleState.paused.toString()) {
-        if (batteryMod.notifyBatteryLevel != batteryMod.currBatteryLevel &&
-            (batteryMod.notifyBatteryState != batteryMod.currBatteryState ||
-                batteryMod.currBatteryState != BatteryState.full)) {
-          if (!AudioService.connected) {
+        if (batteryMod.notifyBatteryLevel == batteryMod.currBatteryLevel &&
+            (batteryMod.notifyBatteryState == batteryMod.currBatteryState ||
+                batteryMod.currBatteryState == BatteryState.full)) {
+          if (AudioService.connected) {
             await AudioService.connect();
           }
-          if (!AudioService.running) {
+          if (AudioService.running) {
             AudioService.start(
                 backgroundTaskEntrypoint: _backgroundTaskEntrypoint,
                 params: batteryMod.toJsonList());
@@ -181,12 +184,19 @@ class BatteryDetailsState extends State<BatteryDetails>
     return Scaffold(
         key: Key('batDetails'),
         body: StreamBuilder(
-            stream: batteryStream,
+            stream: batteryStreamController.stream,
             builder:
                 (BuildContext context, AsyncSnapshot<BatteryModel> snapshot) {
-              if (snapshot.data == null ||
-                  snapshot.data?.currBatteryState == null) {
-                return Container();
+              if (!snapshot.hasData) {
+                // || snapshot.data?.currBatteryState == null) {
+                return Container(
+                    child: Text(
+                  'No Data',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold),
+                ));
               } else {
                 return Scaffold(
                   backgroundColor: Colors.transparent,
@@ -213,7 +223,7 @@ class BatteryDetailsState extends State<BatteryDetails>
                                       children: [
                                         Expanded(
                                           flex: 0,
-                                          child: Text(batteryMod.appTitle,
+                                          child: Text(batteryMod.appTitle ?? "",
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 35.0,
@@ -221,12 +231,12 @@ class BatteryDetailsState extends State<BatteryDetails>
                                         ),
                                       ]),
                                 )
-                              : null,
+                              : SizedBox.shrink(),
                           orientationState
                               ? Padding(
                                   padding: EdgeInsets.all(20.0),
                                 )
-                              : null,
+                              : SizedBox.shrink(),
                           Expanded(
                             flex: 1,
                             child: Container(
@@ -252,15 +262,15 @@ class BatteryDetailsState extends State<BatteryDetails>
                                         Text(
                                           batteryMod
                                               .getBatteryStateDisplayValue(
-                                                  snapshot
-                                                      .data.currBatteryState),
+                                                  batteryStateVal: snapshot
+                                                      .data!.currBatteryState),
                                           style: TextStyle(
                                             color: batteryMod.frontTextColor,
                                             fontSize: 11.0 * txtScaleFactor,
                                           ),
                                         ),
                                         Text(
-                                          snapshot.data.currBatteryLevel
+                                          snapshot.data!.currBatteryLevel
                                                   .toString() +
                                               '%',
                                           style: TextStyle(
@@ -270,7 +280,8 @@ class BatteryDetailsState extends State<BatteryDetails>
                                         ),
                                         Text(
                                           DateFormat.jms().format(snapshot
-                                              .data.currBatteryDateTime),
+                                                  .data!.currBatteryDateTime ??
+                                              new DateTime.now()),
                                           style: TextStyle(
                                             color: batteryMod.frontTextColor,
                                             fontSize: 8.0 * txtScaleFactor,
@@ -282,7 +293,7 @@ class BatteryDetailsState extends State<BatteryDetails>
                           Padding(
                             padding: EdgeInsets.all(20.0),
                           ),
-                        ].where((o) => o != null).toList()));
+                        ].toList()));
                   }),
                   floatingActionButton: floatingButton(snapshot),
                 );
@@ -354,7 +365,7 @@ class BatteryDetailsState extends State<BatteryDetails>
             backgroundColor: batteryMod.backgroundColor,
             child: AnimatedBuilder(
               animation: controllerShowIconOptions,
-              builder: (BuildContext context, Widget child) {
+              builder: (BuildContext context, Widget? child) {
                 return Transform(
                   transform: Matrix4.rotationZ(
                       controllerShowIconOptions.value * 0.5 * math.pi),
@@ -381,17 +392,17 @@ class BatteryDetailsState extends State<BatteryDetails>
   }
 
   @override
-  void dispose() {
+  void dispose() async {
     (() async =>
         await NotificationShow.flutterLocalNotificationsPlugin.cancelAll())();
-    batteryStateSubscription?.cancel();
-    dateTimeSubscription?.cancel();
+    await batteryStateSubscription.cancel();
+    await dateTimeSubscription.cancel();
     //notificationSubscription?.cancel();
-    batteryStream = null;
-    batteryStreamController?.close();
-    batteryStreamController = null;
-    controllerShowIconOptions?.dispose();
-    controllerShowIconOptions = null;
+    // batteryStream = null;
+    await batteryStreamController.close();
+    // batteryStreamController = null;
+    controllerShowIconOptions.dispose();
+    // controllerShowIconOptions = null;
     super.dispose();
   }
 }

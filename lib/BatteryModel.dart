@@ -8,8 +8,8 @@ class BatteryModel {
   Future<SharedPreferences> prefs = SharedPreferences.getInstance();
   BatteryState currBatteryState, notifyBatteryState;
   int currBatteryLevel, notifyBatteryLevel;
-  DateTime currBatteryDateTime;
-  String appTitle;
+  DateTime? currBatteryDateTime;
+  String? appTitle;
   Color backgroundColor, frontTextColor;
 
   BatteryModel({
@@ -23,7 +23,8 @@ class BatteryModel {
     this.frontTextColor = Colors.black,
   });
 
-  getBatteryStateDisplayValue(BatteryState batteryStateVal) {
+  getBatteryStateDisplayValue(
+      {BatteryState batteryStateVal: BatteryState.full}) {
     final stateVal = batteryStateVal
         .toString()
         .substring(batteryStateVal.toString().indexOf('.') + 1);
@@ -37,18 +38,15 @@ class BatteryModel {
         int.tryParse(json['currBatteryLevel']) ?? currBatteryLevel;
     currBatteryDateTime =
         DateTime.tryParse(json['currBatteryDateTime']) ?? currBatteryDateTime;
-    notifyBatteryState =
-        getBatteryStatefromString(json['notifyBatteryState']) ??
-            notifyBatteryState;
+    notifyBatteryState = getBatteryStatefromString(json['notifyBatteryState']);
     notifyBatteryLevel =
         int.tryParse(json['notifyBatteryLevel']) ?? notifyBatteryLevel;
-    backgroundColor =
-        Color(int.parse(json['backgroundColor'])) ?? backgroundColor;
-    frontTextColor = Color(int.parse(json['frontTextColor'])) ?? frontTextColor;
+    backgroundColor = Color(int.parse(json['backgroundColor']));
+    frontTextColor = Color(int.parse(json['frontTextColor']));
     return this;
   }
 
-  BatteryState getBatteryStatefromString(String jsonKey) {
+  BatteryState getBatteryStatefromString(String? jsonKey) {
     if (jsonKey == 'BatteryState.full')
       return BatteryState.full;
     else if (jsonKey == 'BatteryState.discharging')
@@ -86,7 +84,7 @@ class BatteryModel {
   getPersistedValues() async {
     try {
       final SharedPreferences sPrefs = await prefs;
-      final String objVal = sPrefs.getString('currentUserDetails');
+      final String? objVal = sPrefs.getString('currentUserDetails');
       if (objVal != null) {
         // debugPrint('string from disk' + objVal);
         // debugPrint('decoded json from disk' + Map.from(json.decode(objVal)).toString());

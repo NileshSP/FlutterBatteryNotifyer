@@ -2,19 +2,20 @@ import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:battery/battery.dart';
 import 'package:intl/intl.dart';
-
 import 'BatteryModel.dart';
 import 'NotificationShow.dart';
 
 class BackgroundService extends BackgroundAudioTask {
-  StreamSubscription notificationSubscription;
-  StreamSubscription<BatteryState> batteryStateSubscription;
-  BatteryModel batteryMod;
-  Battery battery;
+  // ignore: cancel_subscriptions
+  late StreamSubscription notificationSubscription;
+  // ignore: cancel_subscriptions
+  late StreamSubscription<BatteryState> batteryStateSubscription;
+  late BatteryModel batteryMod;
+  late Battery battery;
 
   @override
-  Future<void> onStart(Map<String, dynamic> params) async {
-    batteryMod = BatteryModel().fromJson(params);
+  Future<void> onStart(Map<String, dynamic>? params) async {
+    batteryMod = BatteryModel().fromJson(params!);
     battery = Battery();
     batteryStateSubscription =
         battery.onBatteryStateChanged.listen((BatteryState state) async {
@@ -64,11 +65,11 @@ class BackgroundService extends BackgroundAudioTask {
   @override
   Future<void> onStop() async {
     await batteryStateSubscription.cancel();
-    batteryStateSubscription = null;
+    // batteryStateSubscription = null;
     await notificationSubscription.cancel();
-    notificationSubscription = null;
-    battery = null;
-    batteryMod = null;
+    // notificationSubscription = null;
+    // battery = null;
+    // batteryMod = null;
     AudioServiceBackground.setState(playing: false);
     await super.onStop();
   }

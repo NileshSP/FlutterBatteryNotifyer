@@ -6,7 +6,7 @@ import 'BatteryModel.dart';
 import 'package:numberpicker/numberpicker.dart';
 
 class NotificationTriggers extends StatefulWidget {
-  final BatteryModel batMod;
+  final BatteryModel? batMod;
 
   NotificationTriggers(this.batMod);
 
@@ -15,11 +15,11 @@ class NotificationTriggers extends StatefulWidget {
 }
 
 class NotificationTriggersState extends State<NotificationTriggers> {
-  NumberPicker integerNumberPicker;
-  List<BatteryState> listBatteryStates;
-  BatteryModel bMod;
+  NumberPicker? integerNumberPicker;
+  late List<BatteryState> listBatteryStates;
+  BatteryModel? bMod;
   double opacityValue = 0.0;
-  Timer timerInstance;
+  Timer? timerInstance;
 
   @override
   void initState() {
@@ -27,9 +27,9 @@ class NotificationTriggersState extends State<NotificationTriggers> {
     bMod = widget.batMod;
     listBatteryStates = <BatteryState>[];
     listBatteryStates.addAll(getBatteryStateList());
-    bMod.notifyBatteryState =
-        listBatteryStates.contains(bMod.notifyBatteryState)
-            ? bMod.notifyBatteryState
+    bMod!.notifyBatteryState =
+        listBatteryStates.contains(bMod!.notifyBatteryState)
+            ? bMod!.notifyBatteryState
             : listBatteryStates.first;
     timerInstance = Timer.periodic(
         Duration(seconds: 1),
@@ -40,7 +40,7 @@ class NotificationTriggersState extends State<NotificationTriggers> {
 
   List<BatteryState> getBatteryStateList() => BatteryState.values
       .where(((BatteryState s) =>
-          ((s == BatteryState.discharging && bMod.isInDebugMode) ||
+          ((s == BatteryState.discharging && bMod!.isInDebugMode) ||
                   s != BatteryState.discharging)
               ? true
               : false))
@@ -54,7 +54,7 @@ class NotificationTriggersState extends State<NotificationTriggers> {
             : false;
 
     return Scaffold(
-      backgroundColor: bMod.backgroundColor,
+      backgroundColor: bMod!.backgroundColor,
       body: Center(
         child: SingleChildScrollView(
             padding: EdgeInsets.all(10.0),
@@ -69,24 +69,24 @@ class NotificationTriggersState extends State<NotificationTriggers> {
                             padding: EdgeInsets.all(20.0),
                             child: Text('Notify @',
                                 style: TextStyle(
-                                    color: bMod.frontTextColor,
+                                    color: bMod!.frontTextColor,
                                     fontSize: 40.0)),
                           ),
                           DropdownButtonHideUnderline(
                             child: DropdownButton<BatteryState>(
-                              value: bMod.notifyBatteryState,
+                              value: bMod!.notifyBatteryState,
                               hint: Center(child: Text('Select battery state')),
                               onChanged: (newValue) {
                                 if (newValue != null) {
                                   setState(() {
-                                    bMod.notifyBatteryState = newValue;
+                                    bMod!.notifyBatteryState = newValue;
                                     if (newValue == BatteryState.full &&
-                                        bMod.notifyBatteryLevel != 100) {
+                                        bMod!.notifyBatteryLevel != 100) {
                                       //integerNumberPicker.animateInt(
-                                      bMod.notifyBatteryLevel = 100;
+                                      bMod!.notifyBatteryLevel = 100;
                                       //);
                                     }
-                                    bMod.storeValuesToBePersisted();
+                                    bMod!.storeValuesToBePersisted();
                                   });
                                 }
                               },
@@ -94,7 +94,8 @@ class NotificationTriggersState extends State<NotificationTriggers> {
                                 return DropdownMenuItem<BatteryState>(
                                   value: item,
                                   child: Text(
-                                    bMod.getBatteryStateDisplayValue(item),
+                                    bMod!.getBatteryStateDisplayValue(
+                                        batteryStateVal: item),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: Theme.of(context).accentColor,
@@ -109,39 +110,37 @@ class NotificationTriggersState extends State<NotificationTriggers> {
                             padding: EdgeInsets.all(20.0),
                             child: Text('with',
                                 style: TextStyle(
-                                    color: bMod.frontTextColor,
+                                    color: bMod!.frontTextColor,
                                     fontSize: 40.0)),
                           ),
                           integerNumberPicker = NumberPicker(
                             minValue: 1,
                             maxValue: 100,
                             step: 1,
-                            value: bMod.notifyBatteryLevel,
+                            value: bMod!.notifyBatteryLevel,
                             onChanged: (newValue) {
-                              if (newValue != null) {
-                                setState(() {
-                                  bMod.notifyBatteryLevel = newValue;
-                                  bMod.notifyBatteryState = (() {
-                                    if (newValue == 100) {
-                                      return BatteryState.full;
-                                    } else if (newValue < 100 &&
-                                        bMod.notifyBatteryState ==
-                                            BatteryState.full) {
-                                      return BatteryState.charging;
-                                    } else {
-                                      return bMod.notifyBatteryState;
-                                    }
-                                  })();
-                                });
-                                bMod.storeValuesToBePersisted();
-                              }
+                              setState(() {
+                                bMod!.notifyBatteryLevel = newValue;
+                                bMod!.notifyBatteryState = (() {
+                                  if (newValue == 100) {
+                                    return BatteryState.full;
+                                  } else if (newValue < 100 &&
+                                      bMod!.notifyBatteryState ==
+                                          BatteryState.full) {
+                                    return BatteryState.charging;
+                                  } else {
+                                    return bMod!.notifyBatteryState;
+                                  }
+                                })();
+                              });
+                              bMod!.storeValuesToBePersisted();
                             },
                           ),
                           Padding(
                             padding: EdgeInsets.all(20.0),
                             child: Text('%',
                                 style: TextStyle(
-                                    color: bMod.frontTextColor,
+                                    color: bMod!.frontTextColor,
                                     fontSize: 40.0)),
                           ),
                           Container(
@@ -174,7 +173,7 @@ class NotificationTriggersState extends State<NotificationTriggers> {
                                               color: Colors.black)),
                                       Text(
                                           "In device's recent app view list, kindly dock(pin)/lock the '" +
-                                              bMod.appTitle +
+                                              bMod!.appTitle! +
                                               "' app to continuously monitor the above settings while the app is not in use",
                                           style: TextStyle(
                                               fontSize: 16,

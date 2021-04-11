@@ -9,7 +9,7 @@ class NotificationShow {
       FlutterLocalNotificationsPlugin();
   static int notificationCounter = 0;
 
-  static Future showNotification(BatteryModel bMod) async {
+  static Future showNotification(BatteryModel? bMod) async {
     bool isBackgroundNotification = true;
     String channelId = 'BatteryNotifier',
         channelName = 'Battery Notifier',
@@ -27,24 +27,27 @@ class NotificationShow {
         : 'Last monitored on ' +
             DateFormat.yMMMMd("en_US")
                 .add_jms()
-                .format(bMod.currBatteryDateTime);
+                .format(bMod!.currBatteryDateTime!);
     final String notificationText = ((isBackgroundNotification)
             ? 'State: ' +
-                bMod.getBatteryStateDisplayValue(bMod.currBatteryState) +
+                bMod!.getBatteryStateDisplayValue(
+                    batteryStateVal: bMod.currBatteryState) +
                 ' with ' +
                 bMod.currBatteryLevel.toString() +
                 '% @ ' +
                 DateFormat.yMMMMd("en_US")
                     .add_jms()
-                    .format(bMod.currBatteryDateTime)
+                    .format(bMod.currBatteryDateTime!)
             : 'Notify @ ' +
-                bMod.getBatteryStateDisplayValue(bMod.notifyBatteryState) +
+                bMod!.getBatteryStateDisplayValue(
+                    batteryStateVal: bMod.notifyBatteryState) +
                 ' with ' +
                 bMod.notifyBatteryLevel.toString() +
                 '%, currently ' +
                 bMod.currBatteryLevel.toString() +
                 '% and ' +
-                bMod.getBatteryStateDisplayValue(bMod.currBatteryState)
+                bMod.getBatteryStateDisplayValue(
+                    batteryStateVal: bMod.currBatteryState)
         //' - Background services are actively \n monitoring scheduled trigger'
         );
     final androidPlatformChannelSpecifics = AndroidNotificationDetails(

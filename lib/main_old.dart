@@ -47,10 +47,10 @@ class AudioPlayerTask extends BackgroundAudioTask {
   // final _audioPlayer = AudioPlayer();
   // final _completer = Completer();
 
-  StreamSubscription streamSubscription;
+  late StreamSubscription streamSubscription;
 
   @override
-  Future<void> onStart(Map<String, dynamic> params) async {
+  Future<void> onStart(Map<String, dynamic>? params) async {
     // Connect to the URL
     //await _audioPlayer.setUrl("https://exampledomain.com/song.mp3");
     // Now we're ready to play
