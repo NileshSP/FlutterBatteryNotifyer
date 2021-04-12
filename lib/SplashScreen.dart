@@ -62,9 +62,7 @@ class SplashScreenState extends State<SplashScreen> {
             initialData: 0.0,
             stream: periodicStream,
             builder: (BuildContext context, AsyncSnapshot<double> snapshot) {
-              debugPrint('SplashScreen >> $snapshot');
               if (snapshot.hasData) {
-                //final progressValue = snapshot.data;
                 return Stack(
                     fit: StackFit.expand,
                     children: <Widget>[

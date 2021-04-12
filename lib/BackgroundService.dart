@@ -13,6 +13,7 @@ class BackgroundService extends BackgroundAudioTask {
   late StreamSubscription<BatteryState> batteryStateSubscription;
   late BatteryModel batteryMod;
   late Battery battery;
+  int lastBatteryLevel = 0;
 
   @override
   Future<void> onStart(Map<String, dynamic>? params) async {
@@ -22,7 +23,7 @@ class BackgroundService extends BackgroundAudioTask {
         battery.onBatteryStateChanged.listen((BatteryState state) async {
       battery.batteryLevel.then((level) {
         batteryMod.currBatteryState = state;
-        batteryMod.currBatteryLevel = level; //await battery.batteryLevel;
+        batteryMod.currBatteryLevel = level;
         batteryMod.currBatteryDateTime = DateTime.now();
       });
     });
@@ -41,17 +42,28 @@ class BackgroundService extends BackgroundAudioTask {
               batteryMod.notifyBatteryState == BatteryState.full) ||
           (batteryMod.currBatteryState == BatteryState.full &&
               batteryMod.notifyBatteryState == BatteryState.discharging)) {
-        NotificationShow.notificationCounter = 0;
-        NotificationShow.showNotification(batteryMod);
+        if (lastBatteryLevel != batteryMod.currBatteryLevel) {
+          NotificationShow.notificationCounter = 0;
+          await NotificationShow.showNotification(batteryMod);
+          lastBatteryLevel = batteryMod.currBatteryLevel;
+          debugPrint(
+              DateFormat.yMMMMd("en_US").add_jms().format(DateTime.now()) +
+                  ' | battery state/level change notification delivered');
+        }
       } else {
         if (batteryMod.notifyBatteryLevel == batteryMod.currBatteryLevel &&
             (batteryMod.notifyBatteryState == batteryMod.currBatteryState ||
                 batteryMod.currBatteryState == BatteryState.full)) {
-          if (NotificationShow.notificationCounter == 0)
+          if (NotificationShow.notificationCounter == 0) {
+            await NotificationShow.flutterLocalNotificationsPlugin
+                .cancel(NotificationShow.notificationCounter);
             NotificationShow.notificationCounter++;
-          NotificationShow.showNotification(batteryMod);
+          }
+          await NotificationShow.showNotification(batteryMod);
+          debugPrint(
+              DateFormat.yMMMMd("en_US").add_jms().format(DateTime.now()) +
+                  ' | final notification delivered');
         }
-        NotificationShow.flutterLocalNotificationsPlugin.cancel(0);
         this.onStop();
       }
       debugPrint(DateFormat.yMMMMd("en_US").add_jms().format(DateTime.now()));

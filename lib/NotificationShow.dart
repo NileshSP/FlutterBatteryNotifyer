@@ -10,25 +10,25 @@ class NotificationShow {
   static int notificationCounter = 0;
 
   static Future showNotification(BatteryModel? bMod) async {
-    bool isBackgroundNotification = true;
+    bool notBackgroundNotification = true;
     String channelId = 'BatteryNotifier',
         channelName = 'Battery Notifier',
         channelDescription =
             'Battery alerter with notification as per specified trigger';
     if (notificationCounter == 0) {
-      isBackgroundNotification = false;
+      notBackgroundNotification = false;
       channelId = 'BatteryNotifier0';
       channelName = 'Battery Notifier Initial';
       channelDescription =
           'Battery alerter with notification as per specified trigger';
     }
-    final String notificationTitle = (isBackgroundNotification)
+    final String notificationTitle = (notBackgroundNotification)
         ? 'Battery Alert'
         : 'Last monitored on ' +
             DateFormat.yMMMMd("en_US")
                 .add_jms()
                 .format(bMod!.currBatteryDateTime!);
-    final String notificationText = ((isBackgroundNotification)
+    final String notificationText = ((notBackgroundNotification)
             ? 'State: ' +
                 bMod!.getBatteryStateDisplayValue(
                     batteryStateVal: bMod.currBatteryState) +
@@ -52,18 +52,18 @@ class NotificationShow {
         );
     final androidPlatformChannelSpecifics = AndroidNotificationDetails(
         channelId, channelName, channelDescription,
-        importance: isBackgroundNotification ? Importance.max : Importance.low,
-        priority: isBackgroundNotification ? Priority.low : Priority.high,
-        indeterminate: isBackgroundNotification,
+        importance: notBackgroundNotification ? Importance.max : Importance.low,
+        priority: notBackgroundNotification ? Priority.low : Priority.high,
+        indeterminate: notBackgroundNotification,
         // showProgress: false,
-        // playSound : isBackgroundNotification,
-        channelShowBadge: isBackgroundNotification,
-        enableVibration: isBackgroundNotification,
-        onlyAlertOnce: !isBackgroundNotification,
-        ongoing: isBackgroundNotification,
+        // playSound : notBackgroundNotification,
+        channelShowBadge: notBackgroundNotification,
+        enableVibration: notBackgroundNotification,
+        onlyAlertOnce: !notBackgroundNotification,
+        ongoing: notBackgroundNotification,
         autoCancel: true);
     final iOSPlatformChannelSpecifics =
-        IOSNotificationDetails(presentSound: isBackgroundNotification);
+        IOSNotificationDetails(presentSound: notBackgroundNotification);
     final platformChannelSpecifics = NotificationDetails(
         android: androidPlatformChannelSpecifics,
         iOS: iOSPlatformChannelSpecifics);
