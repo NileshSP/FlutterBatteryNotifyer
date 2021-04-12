@@ -12,7 +12,7 @@ import 'NotificationShow.dart';
 import 'NotificationTriggers.dart';
 import 'PageTransition.dart';
 
-_backgroundTaskEntrypoint() {
+startBackgroundTask() {
   AudioServiceBackground.run(() => BackgroundService());
 }
 
@@ -33,7 +33,7 @@ class BatteryDetailsState extends State<BatteryDetails>
   Battery battery = Battery();
   late BatteryState newBatteryState, batteryStateNotifyVal;
   late StreamSubscription<BatteryState> batteryStateSubscription;
-  late StreamSubscription dateTimeSubscription; //, notificationSubscription;
+  late StreamSubscription dateTimeSubscription;
   late BatteryModel batteryMod;
   late AnimationController controllerShowIconOptions;
 
@@ -86,7 +86,6 @@ class BatteryDetailsState extends State<BatteryDetails>
       if (originalLevel == newBatteryLevel ||
           _originalBatteryState == newBatteryState) {
         if (originalLevel == 0) {
-          // && _originalBatteryState = null) {
           if (newBatteryLevel == bMod.notifyBatteryLevel &&
               (bMod.notifyBatteryState == bMod.currBatteryState ||
                   bMod.currBatteryState == BatteryState.full)) {
@@ -115,7 +114,7 @@ class BatteryDetailsState extends State<BatteryDetails>
         battery.onBatteryStateChanged.listen((BatteryState state) async {
       battery.batteryLevel.then((level) {
         batteryMod.currBatteryState = state;
-        batteryMod.currBatteryLevel = level; //await battery.batteryLevel;
+        batteryMod.currBatteryLevel = level;
         batteryMod.currBatteryDateTime = DateTime.now();
         batteryStreamController.add(batteryMod);
       });
@@ -130,15 +129,15 @@ class BatteryDetailsState extends State<BatteryDetails>
     SystemChannels.lifecycle.setMessageHandler((msg) async {
       debugPrint('SystemChannels > $msg');
       if (msg == AppLifecycleState.paused.toString()) {
-        if (batteryMod.notifyBatteryLevel == batteryMod.currBatteryLevel &&
+        if (!(batteryMod.notifyBatteryLevel == batteryMod.currBatteryLevel &&
             (batteryMod.notifyBatteryState == batteryMod.currBatteryState ||
-                batteryMod.currBatteryState == BatteryState.full)) {
-          if (AudioService.connected) {
+                batteryMod.currBatteryState == BatteryState.full))) {
+          if (!AudioService.connected) {
             await AudioService.connect();
           }
-          if (AudioService.running) {
+          if (!AudioService.running) {
             AudioService.start(
-                backgroundTaskEntrypoint: _backgroundTaskEntrypoint,
+                backgroundTaskEntrypoint: startBackgroundTask,
                 params: batteryMod.toJsonList());
           }
         }
@@ -149,7 +148,6 @@ class BatteryDetailsState extends State<BatteryDetails>
           await AudioService.stop();
           await AudioService.disconnect();
         }
-        //notificationSubscription?.cancel();
         await NotificationShow.flutterLocalNotificationsPlugin.cancel(0);
         setState(() {});
       }
@@ -190,13 +188,20 @@ class BatteryDetailsState extends State<BatteryDetails>
               if (!snapshot.hasData) {
                 // || snapshot.data?.currBatteryState == null) {
                 return Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      color: Colors.transparent,
+                    ),
                     child: Text(
-                  'No Data',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold),
-                ));
+                      'Battery data not available at th moment!!',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold),
+                    ));
               } else {
                 return Scaffold(
                   backgroundColor: Colors.transparent,
@@ -342,7 +347,7 @@ class BatteryDetailsState extends State<BatteryDetails>
                   Navigator.of(context).push(
                       //   MaterialPageRoute(builder: (context) =>
                       PageTransition(
-                          widget: NotificationTriggers(snapshot.data),
+                          widget: NotificationTriggers(snapshot.data!),
                           tranType: 'fade',
                           tranDuration: 700)
                       //   )
@@ -397,12 +402,8 @@ class BatteryDetailsState extends State<BatteryDetails>
         await NotificationShow.flutterLocalNotificationsPlugin.cancelAll())();
     await batteryStateSubscription.cancel();
     await dateTimeSubscription.cancel();
-    //notificationSubscription?.cancel();
-    // batteryStream = null;
     await batteryStreamController.close();
-    // batteryStreamController = null;
     controllerShowIconOptions.dispose();
-    // controllerShowIconOptions = null;
     super.dispose();
   }
 }

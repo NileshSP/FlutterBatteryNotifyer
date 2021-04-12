@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:audio_service/audio_service.dart';
 import 'package:battery/battery.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'BatteryModel.dart';
 import 'NotificationShow.dart';
@@ -29,8 +30,6 @@ class BackgroundService extends BackgroundAudioTask {
     // show notification to simulate as app is running in background
     notificationSubscription =
         Stream.periodic(Duration(seconds: 1)).listen((_) async {
-      // final int bLevel = await battery.batteryLevel;
-      // batteryMod.currBatteryLevel = bLevel;
       if ((batteryMod.currBatteryState == batteryMod.notifyBatteryState &&
                   (batteryMod.currBatteryState == BatteryState.charging &&
                       (batteryMod.currBatteryLevel <
@@ -53,10 +52,9 @@ class BackgroundService extends BackgroundAudioTask {
           NotificationShow.showNotification(batteryMod);
         }
         NotificationShow.flutterLocalNotificationsPlugin.cancel(0);
-        notificationSubscription.cancel();
-        onStop();
+        this.onStop();
       }
-      print(DateFormat.yMMMMd("en_US").add_jms().format(DateTime.now()));
+      debugPrint(DateFormat.yMMMMd("en_US").add_jms().format(DateTime.now()));
     });
 
     AudioServiceBackground.setState(playing: true);
@@ -65,11 +63,7 @@ class BackgroundService extends BackgroundAudioTask {
   @override
   Future<void> onStop() async {
     await batteryStateSubscription.cancel();
-    // batteryStateSubscription = null;
     await notificationSubscription.cancel();
-    // notificationSubscription = null;
-    // battery = null;
-    // batteryMod = null;
     AudioServiceBackground.setState(playing: false);
     await super.onStop();
   }

@@ -107,26 +107,6 @@ class SplashScreenState extends State<SplashScreen> {
                                 ),
                               ),
                             ),
-                            // Expanded(
-                            //   flex:1,
-                            //   child:Column(
-                            //     mainAxisAlignment: MainAxisAlignment.center,
-                            //     children: <Widget>[
-                            //       CircularProgressIndicator(value: progressValue, valueColor: AlwaysStoppedAnimation<Color>(Colors.white)),
-                            //       Padding(
-                            //         padding: EdgeInsets.only(top: 10.0)
-                            //       ),
-                            //       Text(
-                            //         'loading',
-                            //         style: TextStyle(
-                            //           color: Colors.white,
-                            //           fontSize: 24.0,
-                            //           fontWeight: FontWeight.bold
-                            //         ),
-                            //       )
-                            //     ].where((o) => o != null).toList()
-                            //   ),
-                            // ),
                           ].toList())
                     ].toList());
               } else {
@@ -146,9 +126,6 @@ class SplashScreenState extends State<SplashScreen> {
   void dispose() {
     super.dispose();
     periodicSubscription.cancel();
-    //periodicSubscription = null;
-    //periodicStream = null;
     periodicController.close();
-    //periodicController = null;
   }
 }
