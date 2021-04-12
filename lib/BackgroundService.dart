@@ -54,11 +54,9 @@ class BackgroundService extends BackgroundAudioTask {
         if (batteryMod.notifyBatteryLevel == batteryMod.currBatteryLevel &&
             (batteryMod.notifyBatteryState == batteryMod.currBatteryState ||
                 batteryMod.currBatteryState == BatteryState.full)) {
-          if (NotificationShow.notificationCounter == 0) {
-            await NotificationShow.flutterLocalNotificationsPlugin
-                .cancel(NotificationShow.notificationCounter);
+          await NotificationShow.flutterLocalNotificationsPlugin.cancelAll();
+          if (NotificationShow.notificationCounter == 0)
             NotificationShow.notificationCounter++;
-          }
           await NotificationShow.showNotification(batteryMod);
           debugPrint(
               DateFormat.yMMMMd("en_US").add_jms().format(DateTime.now()) +

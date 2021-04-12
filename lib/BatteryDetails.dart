@@ -188,22 +188,22 @@ class BatteryDetailsState extends State<BatteryDetails>
             builder:
                 (BuildContext context, AsyncSnapshot<BatteryModel> snapshot) {
               if (!snapshot.hasData) {
-                // || snapshot.data?.currBatteryState == null) {
                 return Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      color: Colors.transparent,
-                    ),
-                    child: Text(
-                      'Battery data not available at th moment!!',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.bold),
-                    ));
+                    // width: double.infinity,
+                    // height: double.infinity,
+                    // alignment: Alignment.center,
+                    // decoration: BoxDecoration(
+                    //   shape: BoxShape.rectangle,
+                    //   color: Colors.transparent,
+                    // ),
+                    // child: Text(
+                    //   'Battery data not available at th moment!!',
+                    //   style: TextStyle(
+                    //       color: Colors.white,
+                    //       fontSize: 24.0,
+                    //       fontWeight: FontWeight.bold),
+                    // )
+                    );
               } else {
                 return Scaffold(
                   backgroundColor: Colors.transparent,
