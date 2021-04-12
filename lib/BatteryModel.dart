@@ -11,17 +11,18 @@ class BatteryModel {
   DateTime? currBatteryDateTime;
   String? appTitle;
   Color backgroundColor, frontTextColor;
+  bool appExit;
 
-  BatteryModel({
-    this.appTitle,
-    this.currBatteryState = BatteryState.charging,
-    this.currBatteryLevel = 0,
-    this.currBatteryDateTime,
-    this.notifyBatteryState = BatteryState.full,
-    this.notifyBatteryLevel = 100,
-    this.backgroundColor = Colors.greenAccent,
-    this.frontTextColor = Colors.black,
-  });
+  BatteryModel(
+      {this.appTitle,
+      this.currBatteryState = BatteryState.charging,
+      this.currBatteryLevel = 0,
+      this.currBatteryDateTime,
+      this.notifyBatteryState = BatteryState.full,
+      this.notifyBatteryLevel = 100,
+      this.backgroundColor = Colors.greenAccent,
+      this.frontTextColor = Colors.black,
+      this.appExit = false});
 
   getBatteryStateDisplayValue(
       {BatteryState batteryStateVal: BatteryState.full}) {
@@ -43,6 +44,7 @@ class BatteryModel {
         int.tryParse(json['notifyBatteryLevel']) ?? notifyBatteryLevel;
     backgroundColor = Color(int.parse(json['backgroundColor']));
     frontTextColor = Color(int.parse(json['frontTextColor']));
+    appExit = bool.fromEnvironment(json['appExit']);
     return this;
   }
 
@@ -63,7 +65,8 @@ class BatteryModel {
         'notifyBatteryState': notifyBatteryState.toString(),
         'notifyBatteryLevel': notifyBatteryLevel.toString(),
         'backgroundColor': backgroundColor.value.toString(),
-        'frontTextColor': frontTextColor.value.toString()
+        'frontTextColor': frontTextColor.value.toString(),
+        'appExit': appExit.toString(),
       };
 
   Future<String> toJson() async {

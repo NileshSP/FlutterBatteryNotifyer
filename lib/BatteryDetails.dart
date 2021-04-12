@@ -132,13 +132,15 @@ class BatteryDetailsState extends State<BatteryDetails>
         if (!(batteryMod.notifyBatteryLevel == batteryMod.currBatteryLevel &&
             (batteryMod.notifyBatteryState == batteryMod.currBatteryState ||
                 batteryMod.currBatteryState == BatteryState.full))) {
-          if (!AudioService.connected) {
-            await AudioService.connect();
-          }
-          if (!AudioService.running) {
-            AudioService.start(
-                backgroundTaskEntrypoint: startBackgroundTask,
-                params: batteryMod.toJsonList());
+          if (!batteryMod.appExit) {
+            if (!AudioService.connected) {
+              await AudioService.connect();
+            }
+            if (!AudioService.running) {
+              AudioService.start(
+                  backgroundTaskEntrypoint: startBackgroundTask,
+                  params: batteryMod.toJsonList());
+            }
           }
         }
       } else if (msg == AppLifecycleState.resumed.toString() ||
@@ -353,7 +355,7 @@ class BatteryDetailsState extends State<BatteryDetails>
                       //   )
                       );
                 } else if (icons[index] == Icons.exit_to_app) {
-                  //Navigator.pop(context);
+                  batteryMod.appExit = true;
                   Future.delayed(const Duration(milliseconds: 500), () {
                     SystemChannels.platform.invokeMethod('SystemNavigator.pop');
                   });
